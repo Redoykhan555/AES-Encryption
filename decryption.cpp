@@ -52,20 +52,16 @@ int main(int argc, char const *argv[])
         if(string(argv[i])=="-o") deFilePath = argv[i+1];
     }
 
-    ifstream keyFile(keyFilePath,ios::binary);
-    ifstream enFile (encFilePath,ios::binary);
     ofstream deFile (deFilePath,ios::binary);
+
+    string keyBuffer;
+    readFile(keyFilePath,keyBuffer);
+    OKey.copy((uint32_t*)&keyBuffer[0]);
 
     string buffer;
     uint64_t fSize;
 
-    enFile.seekg(0, ios::end);
-    fSize = enFile.tellg();
-    buffer.resize(fSize);
-
-    enFile.seekg(0, ios::beg);
-    enFile.read(&buffer[0],fSize);
-    enFile.close();
+    fSize = readFile(encFilePath,buffer);
 
     for(int i=0;i<fSize;i+=16){
         Key data;
@@ -74,9 +70,7 @@ int main(int argc, char const *argv[])
         char* bytes = (char*) data.words;
         for(int j=0;j<16;j++) buffer[i+j] = bytes[j];
     }
-    cout<<buffer<<endl;
     uint32_t* mSize = (uint32_t*)&buffer[fSize-8];
-    cout<<fSize<< " Size:"<<*mSize<<endl;
     deFile.write(&buffer[0],*mSize);
     deFile.close();
     return 0;

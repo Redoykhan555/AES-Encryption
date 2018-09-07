@@ -153,11 +153,11 @@ void mixColumn(uint8_t cur[4][4],int c,bool rev=false){
     for (int i = 0; i < 4; ++i) cur[i][c] = q[i];
 }
 
-uint32_t readFile(string path,string buffer){
-	ifstream file(keyFilePath,ios::binary);
+uint64_t readFile(string path,string &buffer){
+	ifstream file(path,ios::binary);
 
 	file.seekg(0, ios::end);
-    uint32_t fSize = enFile.tellg();
+    uint64_t fSize = file.tellg();
     buffer.resize(fSize);
 
     file.seekg(0, ios::beg);

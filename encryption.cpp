@@ -47,27 +47,22 @@ int main(int argc, char const *argv[])
         if(string(argv[i])=="-o") outFilePath = argv[i+1];
     }
 
-    ifstream keyFile(keyFilePath,ios::binary);
-    ifstream inpFile (inpFilePath,ios::binary);
-    ofstream outFile (outFilePath,ios::binary);
-
     string keyBuffer;
-
+    readFile(keyFilePath,keyBuffer);
+    OKey.copy((uint32_t*)&keyBuffer[0]);
 
 	string buffer;
 	uint64_t mSize,to_pad;
 
-    mSize = readFile(inpFilePath);
-
+    mSize = readFile(inpFilePath,buffer);
     to_pad = (mSize+8)%16==0?0:16-(mSize+8)%16;
+    buffer.resize(mSize+to_pad+8,0x01); //padding with 1
 
-    buffer.resize(mSize+to_pad+8);
-
-    for(int i=mSize;i<mSize+to_pad;i++) buffer[i] = 1;
     char* size_bytes = (char*)&mSize;
-    for (int i = 0; i <8 ; ++i) 
-    	buffer[mSize+to_pad+i] =  size_bytes[i];   //(char) (mSize>>((7-i)*8))&255;
+    for (int i = 0; i <8 ; ++i)         //8 bytes for size
+    	buffer[mSize+to_pad+i] =  size_bytes[i];   
 
+    ofstream outFile (outFilePath,ios::binary);
     for(int i=0;i<mSize+to_pad+8;i+=16){
     	Key data;
     	data.copy((uint32_t*)&buffer[i]);
