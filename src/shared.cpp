@@ -157,9 +157,8 @@ uint64_t readFile(string path,string &buffer){
 	ifstream file(path,ios::binary);
 
 	file.seekg(0, ios::end);
-    uint64_t fSize = file.tellg();
+    size_t fSize = file.tellg();
     buffer.resize(fSize);
-
     file.seekg(0, ios::beg);
     file.read(&buffer[0],fSize);
     file.close();

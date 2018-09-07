@@ -1,4 +1,0 @@
-Try with
-
-buffer += myArray;
-should do it. append should also work if you null-terminate the array.
